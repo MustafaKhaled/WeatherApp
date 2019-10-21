@@ -1,4 +1,4 @@
-package com.weatherapp.canvas;
+package com.weatherapp.canvas.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +14,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.weatherapp.canvas.R;
 
 public class MainActivity extends AppCompatActivity {
     private ImageView imageView;

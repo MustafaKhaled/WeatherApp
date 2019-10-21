@@ -89,20 +89,13 @@ public class FileHelper {
         Canvas canvas = new Canvas(bitmap);
         // new antialised Paint
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        // text color - #3D3D3D
-        paint.setColor(Color.rgb(61, 61, 61));
-        // text size in pixels
-        paint.setTextSize((int) (14 * scale));
-        // text shadow
+        paint.setShadowLayer(1F,0F,1F,Color.BLACK);
+        paint.setColor(Color.rgb(255, 255, 255));
+        paint.setTextSize((int) (50 * scale));
         paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
-
-        // draw text to the Canvas center
         Rect bounds = new Rect();
         paint.getTextBounds(gText, 0, gText.length(), bounds);
-        int x = (bitmap.getWidth() - bounds.width())/2;
-        int y = (bitmap.getHeight() + bounds.height())/2;
-
-        canvas.drawText(gText, x, y, paint);
+        canvas.drawText(gText, 200, 200, paint);
 
         return bitmap;
     }

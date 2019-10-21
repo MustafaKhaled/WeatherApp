@@ -20,7 +20,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    dataBinding {
+        enabled = true
+    }
 }
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -30,6 +34,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    //lifecycle
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+
+
     // RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
