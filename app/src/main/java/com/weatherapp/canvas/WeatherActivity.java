@@ -30,6 +30,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.observers.DisposableCompletableObserver;
+import io.reactivex.schedulers.Schedulers;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class WeatherActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
@@ -82,18 +87,14 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
 
     private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
             photoFile = null;
             try {
                 photoFile = FileHelper.createImageFile(this);
 
             } catch (IOException ex) {
-                // Error occurred while creating the Fil
             }
 
-            // Continue only if the File was successfully created
             if (photoFile != null) {
 //                Bitmap bitmap = FileHelper.createBitmapFromFile(n);
                 photoURI = FileProvider.getUriForFile(this,
@@ -127,17 +128,7 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
                 resultCode == RESULT_OK
         ) {
             File file = FileHelper.getFileFromUri(getApplicationContext(), photoURI); //uri is checked fro nullability
-            Runnable runnable = () -> {
-                Bitmap bitmap = FileHelper.createBitmapFromFile(file.getPath());
-                Bitmap result = FileHelper.drawTextToBitmap(getApplicationContext(), bitmap, "This is Text View");
-//                bitmap.recycle();
-                try {
-                    FileHelper.createFileFromBitmap(result, getApplicationContext());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            };
-            runnable.run();
+            addOverlayBanner(file);
             if (photoFile.exists()) {
                 photoFile.delete();
             }
@@ -145,17 +136,35 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
 
     }
 
+    private void addOverlayBanner(File file) {
+        Completable.fromAction(() -> {
+            Bitmap bitmap = FileHelper.createBitmapFromFile(file.getPath());
+            Bitmap result = FileHelper.drawTextToBitmap(getApplicationContext(), bitmap, "This is Text View");
+            try {
+                FileHelper.createFileFromBitmap(result, getApplicationContext());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new DisposableCompletableObserver() {
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "onComplete: Complete");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.d(TAG, "onError: Fail");
+            }
+        });
+    }
+
     private void getAllFiles() {
         File file = new File(getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath());
 
         if (file.isDirectory()) {
             listFile = file.listFiles();
-
-
             for (int i = 0; i < listFile.length; i++) {
-
                 f.add(listFile[i].getAbsolutePath());
-
             }
         }
     }
