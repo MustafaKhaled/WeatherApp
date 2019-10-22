@@ -62,8 +62,6 @@ public class FileHelper {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         byte[] bitmapdata = bos.toByteArray();
-
-//write the bytes in file
         FileOutputStream fos = new FileOutputStream(f);
         fos.write(bitmapdata);
         fos.flush();
@@ -71,7 +69,6 @@ public class FileHelper {
 
         return f;
     }
-
     public static Bitmap drawTextToBitmap(Context gContext,
                                           Bitmap bitmap,
                                           String city,
@@ -85,16 +82,12 @@ public class FileHelper {
 
         Bitmap.Config bitmapConfig =
                 bitmap.getConfig();
-        // set default bitmap config if none
         if (bitmapConfig == null) {
             bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
         }
-        // resource bitmaps are imutable,
-        // so we need to convert it to mutable one
         bitmap = bitmap.copy(bitmapConfig, true);
 
         Canvas canvas = new Canvas(bitmap);
-        // new antialised Paint
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setShadowLayer(1F, 0F, 1F, Color.BLACK);
         paint.setColor(Color.rgb(255, 255, 255));

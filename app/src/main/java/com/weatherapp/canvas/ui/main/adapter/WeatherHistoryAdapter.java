@@ -75,7 +75,6 @@ public class WeatherHistoryAdapter extends RecyclerView.Adapter<WeatherHistoryAd
             Bitmap scaled = Bitmap.createScaledBitmap(FileHelper.createBitmapFromFile(weatherHistoryItem.getFile().getPath()), h, w, true);
             binding.imageView.setImageBitmap(scaled);
             binding.dateCreated.setText(weatherHistoryItem.getDateCreated());
-
             itemView.setOnClickListener(v -> listener.onClick(weatherHistoryItem.getFile()));
         }
     }
