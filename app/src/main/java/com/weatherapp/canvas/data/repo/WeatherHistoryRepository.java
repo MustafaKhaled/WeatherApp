@@ -3,7 +3,10 @@ package com.weatherapp.canvas.data.repo;
 import android.content.Context;
 import android.os.Environment;
 
+import com.weatherapp.canvas.BuildConfig;
 import com.weatherapp.canvas.data.remote.ApiServices;
+import com.weatherapp.canvas.data.remote.model.WeatherResponseModel;
+import com.weatherapp.canvas.util.ResponseApi;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -13,6 +16,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.Module;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 
 public class WeatherHistoryRepository {
     private ApiServices apiServices;
@@ -23,7 +28,7 @@ public class WeatherHistoryRepository {
         this.context = context;
     }
 
-    public File[] getAllFiles() {
+    public Observable<File[]> getAllFiles() {
         ArrayList<String> f = new ArrayList<>();// list of file paths
         File[] listFile = new File[0];
         File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath());
@@ -34,20 +39,10 @@ public class WeatherHistoryRepository {
                 f.add(listFile[i].getAbsolutePath());
             }
         }
-        return listFile;
+        return Observable.just(listFile);
     }
 
-    public ArrayList<String> getAllFileNames() {
-        ArrayList<String> f = new ArrayList<>();// list of file paths
-        String[] listNames = new String[0];
-        File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath());
-
-        if (file.isDirectory()) {
-            File[] listFile = file.listFiles();
-            for (int i = 0; i < listFile.length; i++) {
-                f.add(listFile[i].getName());
-            }
-        }
-        return f;
+    public Single<WeatherResponseModel> getWeather(){
+        return apiServices.getWeatherResponse("Cairo", BuildConfig.API_KEY);
     }
 }

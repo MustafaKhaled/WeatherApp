@@ -7,7 +7,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.weatherapp.canvas.callback.OnHistoryItemListener;
+import com.weatherapp.canvas.data.remote.model.WeatherResponseModel;
 import com.weatherapp.canvas.ui.details.FullImageActivity;
 import com.weatherapp.canvas.ui.main.adapter.WeatherHistoryAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -16,6 +18,7 @@ import com.weatherapp.canvas.di.component.DaggerWeatherHistoryComponent;
 import com.weatherapp.canvas.di.modules.context.ContextModule;
 import com.weatherapp.canvas.di.modules.multibinding.DaggerViewModelFactory;
 import com.weatherapp.canvas.util.FileHelper;
+import com.weatherapp.canvas.util.ResponseApi;
 import com.weatherapp.canvas.viewmodel.WeatherHistoryViewModel;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +57,7 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
     private WeatherHistoryAdapter adapter = new WeatherHistoryAdapter(this);
     private Uri photoURI;
     private File photoFile;
+    private File resultFile;
     final int CAMERA_PICTURE_REQUEST = 1;
     final int CAMERA_RESULT = 2;
     WeatherHistoryViewModel viewModel;
@@ -61,6 +67,8 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
     FloatingActionButton cameraBtn;
     @BindView(R.id.history_list)
     RecyclerView historyRv;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +81,52 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
         setUpRecyclerView();
 
         viewModel = ViewModelProviders.of(this,factory).get(WeatherHistoryViewModel.class);
-        File[] files = viewModel.loadHistory();
-        adapter.addAll(files);
+        viewModel.loadWeatherResponse();
+        viewModel.loadHistory();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        observeWeather();
+        observeHistory();
+    }
+
+    private void observeHistory() {
+        viewModel.getFilesHistory().observe(this,response -> {
+            switch (response.status){
+                case LOADING:
+                    break;
+                case SUCCESS:
+                    adapter.addAll(response.data);
+                    break;
+
+                case ERROR:
+                    break;
+            }
+
+        });
+    }
+
+    private void observeWeather() {
+        viewModel.getWeatherLiveData().observe(this, response -> {
+            switch (response.status){
+                case LOADING:
+                    progressBar.setVisibility(View.VISIBLE);
+                    cameraBtn.setEnabled(false);
+                    return;
+
+                case SUCCESS:
+                    cameraBtn.setEnabled(true);
+                    break;
+
+                case ERROR:
+                    Snackbar.make(cameraBtn,getResources().getString(R.string.error_msg),Snackbar.LENGTH_LONG).show();
+                    break;
+            }
+            progressBar.setVisibility(View.GONE);
+        });
     }
 
     @OnClick(R.id.fab)
@@ -89,7 +141,6 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
                 break;
         }
     }
-
     private void requestCamera() {
         EasyPermissions.requestPermissions(this,
                 "Camera Permission is required",
@@ -120,8 +171,6 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
             }
         }
     }
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -164,14 +213,14 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
                         Bitmap bitmap = FileHelper.createBitmapFromFile(file.getPath());
                         Bitmap result = FileHelper.drawTextToBitmap(getApplicationContext(), bitmap, "This is Text View");
                         try {
-                            FileHelper.createFileFromBitmap(result, getApplicationContext());
+                           resultFile = FileHelper.createFileFromBitmap(result, getApplicationContext());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                     @Override
                     public void onSuccess(File file) {
-                        adapter.add(file);
+                        adapter.add(resultFile);
                     }
                     @Override
                     public void onError(Throwable e) {

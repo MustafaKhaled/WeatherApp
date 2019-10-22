@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module(includes = OkHttpClientModule.class)
 public class RetrofitModule {
-    public static final String BASE_URL = "https://google.com";
+    public static final String BASE_URL = "https://api.openweathermap.org/data/2.5/";
     @ApplicationContextScope
     @Provides
     public Retrofit retrofit(OkHttpClient okHttpClient, Gson gson, GsonConverterFactory gsonConverterFactory){

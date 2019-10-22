@@ -1,5 +1,6 @@
 package com.weatherapp.canvas.ui.main.adapter;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.weatherapp.canvas.R;
 import com.weatherapp.canvas.callback.OnHistoryItemListener;
 import com.weatherapp.canvas.data.local.model.WeatherHistoryItem;
 import com.weatherapp.canvas.databinding.DayWeatherListItemBinding;
+import com.weatherapp.canvas.util.FileHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,7 +70,10 @@ public class WeatherHistoryAdapter extends RecyclerView.Adapter<WeatherHistoryAd
         }
 
         private void bind(WeatherHistoryItem weatherHistoryItem){
-            binding.imageView.setImageURI(Uri.fromFile(weatherHistoryItem.getFile()));
+            int h = 100; // height in pixels
+            int w = 100; // width in pixels
+            Bitmap scaled = Bitmap.createScaledBitmap(FileHelper.createBitmapFromFile(weatherHistoryItem.getFile().getPath()), h, w, true);
+            binding.imageView.setImageBitmap(scaled);
             binding.dateCreated.setText(weatherHistoryItem.getDateCreated());
 
             itemView.setOnClickListener(v -> listener.onClick(weatherHistoryItem.getFile()));
