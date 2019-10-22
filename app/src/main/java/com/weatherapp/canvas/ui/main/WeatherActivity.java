@@ -188,7 +188,7 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
     @Override
     public void onClick(File file) {
         Intent intent = new Intent(this, FullImageActivity.class);
-        intent.putExtra("image",Uri.fromFile(file));
+        intent.putExtra("image",file);
         startActivity(intent);
     }
 }

@@ -1,6 +1,8 @@
 package com.weatherapp.canvas.ui.details;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ShareCompat;
+import androidx.core.content.FileProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +17,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +26,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.weatherapp.canvas.R;
+import com.weatherapp.canvas.ui.main.WeatherActivity;
 import com.weatherapp.canvas.util.FileHelper;
 
 import java.io.File;
@@ -30,19 +34,16 @@ import java.io.File;
 public class FullImageActivity extends AppCompatActivity {
     private static final String TAG = "FullImageActivity";
     private ImageView imageView;
-    private Uri pictureFile;
+    private File pictureFile;
     private Bitmap bitmap1,bitmap2;
-    int BitmapSize = 30;
-    int width, height;
-    Canvas canvas;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imageView = findViewById(R.id.image);
 
-        Uri pictureFile = (Uri) getIntent().getExtras().get("image");
-        imageView.setImageURI(pictureFile);
+        pictureFile = (File) getIntent().getExtras().get("image");
+        imageView.setImageURI(Uri.fromFile(pictureFile));
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
@@ -63,16 +64,13 @@ public class FullImageActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void share(Uri uri){
-//        Drawable mDrawable = mImageView.getDrawable();
-//        Bitmap mBitmap = ((BitmapDrawable) mDrawable).getBitmap();
-//
-//        String path = MediaStore.Images.Media.insertImage(getContentResolver(), mBitmap, "Image Description", null);
-//        Uri uri = Uri.parse(path);
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("image/jpeg");
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(intent, "Share Image"));
+    private void share(File file){
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/html");
+        Uri uri = FileProvider.getUriForFile(this, "com.weather.canvas.fileprovider", file);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.setDataAndType(uri, "image/*");
+        startActivity(Intent.createChooser(shareIntent, "Share"));
     }
 }
