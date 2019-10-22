@@ -1,22 +1,21 @@
-package com.weatherapp.canvas.ui;
+package com.weatherapp.canvas.ui.main;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.weatherapp.canvas.callback.OnHistoryItemListener;
+import com.weatherapp.canvas.ui.details.FullImageActivity;
+import com.weatherapp.canvas.ui.main.adapter.WeatherHistoryAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.weatherapp.canvas.R;
 import com.weatherapp.canvas.di.component.DaggerWeatherHistoryComponent;
 import com.weatherapp.canvas.di.modules.context.ContextModule;
 import com.weatherapp.canvas.di.modules.multibinding.DaggerViewModelFactory;
-import com.weatherapp.canvas.ui.adapter.WeatherHistoryAdapter;
 import com.weatherapp.canvas.util.FileHelper;
-import com.weatherapp.canvas.util.MyApplication;
 import com.weatherapp.canvas.viewmodel.WeatherHistoryViewModel;
 
 import androidx.annotation.NonNull;
@@ -25,19 +24,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -45,28 +40,20 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.Completable;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static java.security.AccessController.getContext;
-
-public class WeatherActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class WeatherActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, OnHistoryItemListener {
     private static final String TAG = "WeatherActivity";
-    private WeatherHistoryAdapter adapter = new WeatherHistoryAdapter();
+    private WeatherHistoryAdapter adapter = new WeatherHistoryAdapter(this);
     private Uri photoURI;
-    private File photoFile, resultFile;
+    private File photoFile;
     final int CAMERA_PICTURE_REQUEST = 1;
     final int CAMERA_RESULT = 2;
-    private ArrayList<String> f = new ArrayList<>();// list of file paths
-    private File[] listFile;
     WeatherHistoryViewModel viewModel;
     @Inject
     DaggerViewModelFactory factory;
@@ -88,7 +75,6 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
         viewModel = ViewModelProviders.of(this,factory).get(WeatherHistoryViewModel.class);
         File[] files = viewModel.loadHistory();
         adapter.addAll(files);
-        Log.d(TAG, "onCreate: Files size "+ files.length);
     }
 
     @OnClick(R.id.fab)
@@ -141,20 +127,17 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_PICTURE_REQUEST
                 && grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openCamera();
         }
     }
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-
     }
 
     @Override
@@ -164,14 +147,14 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
                 resultCode == RESULT_OK
         ) {
             File file = FileHelper.getFileFromUri(getApplicationContext(), photoURI); //uri is checked fro nullability
-            addOverlayBanner2(file);
+            addOverlayBanner(file);
             if (photoFile.exists()) {
                 photoFile.delete();
             }
         }
 
     }
-    private void addOverlayBanner2(File file) {
+    private void addOverlayBanner(File file) {
         Single.just(file)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -188,21 +171,24 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
                     }
                     @Override
                     public void onSuccess(File file) {
-                        resultFile = file;
-                        Log.d(TAG, "onSuccess: WeatherHistoryItem name "+resultFile.getName());
+                        adapter.add(file);
                     }
                     @Override
                     public void onError(Throwable e) {
 
                     }
                 });
-
     }
-
         private void setUpRecyclerView() {
             historyRv.setAdapter(adapter);
             historyRv.setHasFixedSize(true);
             historyRv.setLayoutManager(new LinearLayoutManager(historyRv.getContext(), LinearLayoutManager.VERTICAL, false));
     }
 
+    @Override
+    public void onClick(File file) {
+        Intent intent = new Intent(this, FullImageActivity.class);
+        intent.putExtra("image",Uri.fromFile(file));
+        startActivity(intent);
+    }
 }

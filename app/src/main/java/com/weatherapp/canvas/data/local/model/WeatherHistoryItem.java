@@ -15,11 +15,11 @@ public class WeatherHistoryItem {
         this.dateCreated = dateCreated;
     }
 
-    public File getImageUri() {
+    public File getFile() {
         return imageUri;
     }
 
-    public void setImageUri(File imageUri) {
+    public void setFile(File imageUri) {
         this.imageUri = imageUri;
     }
 
