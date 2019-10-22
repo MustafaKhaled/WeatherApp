@@ -44,7 +44,7 @@ public class WeatherHistoryAdapter extends RecyclerView.Adapter<WeatherHistoryAd
     public void add(File file){
         if(file.length()>0)
         mainHistoryList.add(new WeatherHistoryItem(file,"Cairo",file.getName()));
-        notifyDataSetChanged();
+        notifyItemInserted(mainHistoryList.size());
     }
 
 

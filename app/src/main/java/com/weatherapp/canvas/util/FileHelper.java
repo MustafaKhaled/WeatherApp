@@ -34,11 +34,13 @@ public class FileHelper {
     private static final String TAG = "FileHelper";
     private static final int sEOF = -1;
     private static final int sDEFAULT_BUFFER_SIZE = 1024 * 4;
+
     public static File createImageFile(Context context) throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = timeStamp;
-        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);;
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        ;
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -47,18 +49,18 @@ public class FileHelper {
         return image;
     }
 
-    public static Bitmap createBitmapFromFile(String url){
+    public static Bitmap createBitmapFromFile(String url) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        Bitmap bitmap =  BitmapFactory.decodeFile(url);
+        Bitmap bitmap = BitmapFactory.decodeFile(url);
         return bitmap;
     }
 
-    public static File createFileFromBitmap(Bitmap bitmap,Context context) throws IOException {
+    public static File createFileFromBitmap(Bitmap bitmap, Context context) throws IOException {
         File f = createImageFile(context);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100 , bos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
         byte[] bitmapdata = bos.toByteArray();
 
 //write the bytes in file
@@ -71,15 +73,20 @@ public class FileHelper {
     }
 
     public static Bitmap drawTextToBitmap(Context gContext,
-                                   Bitmap bitmap,
-                                   String gText) {
+                                          Bitmap bitmap,
+                                          String city,
+                                          String country,
+                                          double windSpeed) {
+        String gText = city + "\n" +
+                country + "\n" +
+                windSpeed;
         Resources resources = gContext.getResources();
         float scale = resources.getDisplayMetrics().density;
 
         Bitmap.Config bitmapConfig =
                 bitmap.getConfig();
         // set default bitmap config if none
-        if(bitmapConfig == null) {
+        if (bitmapConfig == null) {
             bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
         }
         // resource bitmaps are imutable,
@@ -89,9 +96,9 @@ public class FileHelper {
         Canvas canvas = new Canvas(bitmap);
         // new antialised Paint
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setShadowLayer(1F,0F,1F,Color.BLACK);
+        paint.setShadowLayer(1F, 0F, 1F, Color.BLACK);
         paint.setColor(Color.rgb(255, 255, 255));
-        paint.setTextSize((int) (50 * scale));
+        paint.setTextSize((int) (80 * scale));
         paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
         Rect bounds = new Rect();
         paint.getTextBounds(gText, 0, gText.length(), bounds);
@@ -128,6 +135,7 @@ public class FileHelper {
         }
         return file;
     }
+
     @Nullable
     public static File createCacheFile(@NonNull Context context, @NonNull Uri uri) {
         return createCacheFile(context);

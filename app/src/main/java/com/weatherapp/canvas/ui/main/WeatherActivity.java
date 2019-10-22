@@ -54,6 +54,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class WeatherActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, OnHistoryItemListener {
     private static final String TAG = "WeatherActivity";
+    private String city, country;
+    private double windSpeed;
     private WeatherHistoryAdapter adapter = new WeatherHistoryAdapter(this);
     private Uri photoURI;
     private File photoFile;
@@ -118,6 +120,9 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
                     return;
 
                 case SUCCESS:
+                    country = response.data.getSys().getCountry();
+                    city = response.data.getName();
+                    windSpeed = response.data.getWind().getSpeed();
                     cameraBtn.setEnabled(true);
                     break;
 
@@ -211,7 +216,7 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
                     @Override
                     public void onSubscribe(Disposable d) {
                         Bitmap bitmap = FileHelper.createBitmapFromFile(file.getPath());
-                        Bitmap result = FileHelper.drawTextToBitmap(getApplicationContext(), bitmap, "This is Text View");
+                        Bitmap result = FileHelper.drawTextToBitmap(getApplicationContext(), bitmap, city,country,windSpeed);
                         try {
                            resultFile = FileHelper.createFileFromBitmap(result, getApplicationContext());
                         } catch (IOException e) {
