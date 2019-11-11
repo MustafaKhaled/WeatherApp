@@ -34,7 +34,7 @@ import java.io.File;
 public class FullImageActivity extends AppCompatActivity {
     private static final String TAG = "FullImageActivity";
     private ImageView imageView;
-    private File pictureFile;
+    private Uri pictureFile;
     private Bitmap bitmap1,bitmap2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +42,8 @@ public class FullImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         imageView = findViewById(R.id.image);
 
-        pictureFile = (File) getIntent().getExtras().get("image");
-        imageView.setImageURI(Uri.fromFile(pictureFile));
+        pictureFile = (Uri) getIntent().getExtras().get("image");
+        imageView.setImageURI(pictureFile);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
     }
 
@@ -64,11 +64,10 @@ public class FullImageActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void share(File file){
+    private void share(Uri uri){
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
         shareIntent.setType("text/html");
-        Uri uri = FileProvider.getUriForFile(this, "com.weather.canvas.fileprovider", file);
         shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
         shareIntent.setDataAndType(uri, "image/*");
         startActivity(Intent.createChooser(shareIntent, "Share"));

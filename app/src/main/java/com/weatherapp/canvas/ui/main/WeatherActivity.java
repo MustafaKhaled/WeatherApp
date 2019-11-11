@@ -86,19 +86,17 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
         viewModel.loadWeatherResponse();
         viewModel.loadHistory();
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         observeWeather();
         observeHistory();
+
     }
+
 
     private void observeHistory() {
         viewModel.getFilesHistory().observe(this,response -> {
             switch (response.status){
                 case LOADING:
+                    adapter.setUpImageLoader(this);
                     break;
                 case SUCCESS:
                     adapter.addAll(response.data);
@@ -240,9 +238,9 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
     }
 
     @Override
-    public void onClick(File file) {
+    public void onClick(Uri uri) {
         Intent intent = new Intent(this, FullImageActivity.class);
-        intent.putExtra("image",file);
+        intent.putExtra("image",uri);
         startActivity(intent);
     }
 }

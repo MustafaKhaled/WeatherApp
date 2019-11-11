@@ -72,4 +72,8 @@ dependencies {
     //Easy Permission
     implementation 'pub.devrel:easypermissions:3.0.0'
 
+    //Universal Image Loader
+    implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+
+
 }
