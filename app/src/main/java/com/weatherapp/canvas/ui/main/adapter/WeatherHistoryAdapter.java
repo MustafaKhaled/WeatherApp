@@ -21,6 +21,7 @@ import com.weatherapp.canvas.callback.OnHistoryItemListener;
 import com.weatherapp.canvas.data.local.model.WeatherHistoryItem;
 import com.weatherapp.canvas.databinding.DayWeatherListItemBinding;
 import com.weatherapp.canvas.util.FileHelper;
+import com.weatherapp.canvas.util.MyApplication;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -84,16 +85,11 @@ public class WeatherHistoryAdapter extends RecyclerView.Adapter<WeatherHistoryAd
         }
 
         private void bind(WeatherHistoryItem weatherHistoryItem){
-            imageLoader.displayImage(Uri.fromFile(weatherHistoryItem.getFile()).toString(),imageView);
+            ((MyApplication)itemView.getContext().getApplicationContext())
+                    .getImageLoader().displayImage(Uri.fromFile(weatherHistoryItem.getFile()).toString(),imageView);
             dateCreated.setText(weatherHistoryItem.getDateCreated());
             itemView.setOnClickListener(v -> listener.onClick(Uri.fromFile(weatherHistoryItem.getFile())));
         }
     }
 
-
-    public void setUpImageLoader(Context context){
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-			.build();
-        imageLoader.init(config);
-    }
 }

@@ -51,6 +51,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
 public class WeatherActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, OnHistoryItemListener {
     private static final String TAG = "WeatherActivity";
@@ -96,12 +97,10 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
         viewModel.getFilesHistory().observe(this,response -> {
             switch (response.status){
                 case LOADING:
-                    adapter.setUpImageLoader(this);
                     break;
                 case SUCCESS:
                     adapter.addAll(response.data);
                     break;
-
                 case ERROR:
                     break;
             }
@@ -145,11 +144,12 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
         }
     }
     private void requestCamera() {
-        EasyPermissions.requestPermissions(this,
-                "Camera Permission is required",
-                CAMERA_PICTURE_REQUEST,
-                Manifest.permission.CAMERA
-        );
+        EasyPermissions.requestPermissions(
+                new PermissionRequest.Builder(this, CAMERA_PICTURE_REQUEST, Manifest.permission.CAMERA)
+                        .setRationale("This Permission is Required")
+                        .setPositiveButtonText("Ok")
+                        .setNegativeButtonText("Cancel")
+                        .build());
     }
 
     private void openCamera() {
@@ -177,19 +177,23 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PICTURE_REQUEST
-                && grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            openCamera();
-        }
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+
+//        if (requestCode == CAMERA_PICTURE_REQUEST
+//                && grantResults.length > 0
+//                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//            openCamera();
+//        }
     }
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        openCamera();
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+
     }
 
     @Override
