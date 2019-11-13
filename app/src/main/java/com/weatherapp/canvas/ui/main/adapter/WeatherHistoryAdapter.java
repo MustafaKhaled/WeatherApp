@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -88,7 +89,9 @@ public class WeatherHistoryAdapter extends RecyclerView.Adapter<WeatherHistoryAd
             ((MyApplication)itemView.getContext().getApplicationContext())
                     .getImageLoader().displayImage(Uri.fromFile(weatherHistoryItem.getFile()).toString(),imageView);
             dateCreated.setText(weatherHistoryItem.getDateCreated());
-            itemView.setOnClickListener(v -> listener.onClick(Uri.fromFile(weatherHistoryItem.getFile())));
+            itemView.setOnClickListener(v -> listener.onClick(FileProvider.getUriForFile(itemView.getContext(),
+                    "com.weather.canvas.fileprovider",weatherHistoryItem.getFile()
+                    )));
         }
     }
 

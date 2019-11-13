@@ -1,38 +1,18 @@
 package com.weatherapp.canvas.ui.details;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ShareCompat;
-import androidx.core.content.FileProvider;
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 
-import com.weatherapp.canvas.R;
-import com.weatherapp.canvas.ui.main.WeatherActivity;
-import com.weatherapp.canvas.util.FileHelper;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.File;
+import com.weatherapp.canvas.R;
 
 public class FullImageActivity extends AppCompatActivity {
-    private static final String TAG = "FullImageActivity";
     private ImageView imageView;
     private Uri pictureFile;
     private Bitmap bitmap1,bitmap2;

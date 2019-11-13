@@ -178,12 +178,6 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-
-//        if (requestCode == CAMERA_PICTURE_REQUEST
-//                && grantResults.length > 0
-//                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//            openCamera();
-//        }
     }
 
     @Override
@@ -202,7 +196,7 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
         if (requestCode == CAMERA_RESULT &&
                 resultCode == RESULT_OK
         ) {
-            File file = FileHelper.getFileFromUri(getApplicationContext(), photoURI); //uri is checked fro nullability
+            File file = FileHelper.getFileFromUri(getApplicationContext(), photoURI);
             addOverlayBanner(file);
             if (photoFile.exists()) {
                 photoFile.delete();
