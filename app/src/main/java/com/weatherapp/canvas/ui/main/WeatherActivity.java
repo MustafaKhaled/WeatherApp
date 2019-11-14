@@ -125,7 +125,6 @@ public class WeatherActivity extends AppCompatActivity implements EasyPermission
                     return;
 
                 case SUCCESS:
-                    country = response.data.getSys().getCountry();
                     windSpeed = response.data.getWind().getSpeed();
                     cameraBtn.setEnabled(true);
                     break;

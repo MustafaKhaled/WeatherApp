@@ -15,7 +15,6 @@ import com.weatherapp.canvas.R;
 public class FullImageActivity extends AppCompatActivity {
     private ImageView imageView;
     private Uri pictureFile;
-    private Bitmap bitmap1,bitmap2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

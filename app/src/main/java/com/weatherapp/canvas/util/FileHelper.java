@@ -73,12 +73,8 @@ public class FileHelper {
                                           Bitmap bitmap,
                                           String country,
                                           double windSpeed) {
-        String gText =
-                country + "\n" +
-                windSpeed;
         Resources resources = gContext.getResources();
         float scale = resources.getDisplayMetrics().density;
-
         Bitmap.Config bitmapConfig =
                 bitmap.getConfig();
         if (bitmapConfig == null) {
@@ -93,8 +89,9 @@ public class FileHelper {
         paint.setTextSize((int) (80 * scale));
         paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
         Rect bounds = new Rect();
-        paint.getTextBounds(gText, 0, gText.length(), bounds);
-        canvas.drawText(gText, 200, 200, paint);
+        paint.getTextBounds(country, 0, country.length(), bounds);
+        canvas.drawText(country, 0, canvas.getHeight()/8, paint);
+        canvas.drawText("Wind Speed is "+windSpeed, 0, (canvas.getHeight()/8) +bounds.height(), paint);
 
         return bitmap;
     }
