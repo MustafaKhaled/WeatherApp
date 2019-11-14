@@ -71,10 +71,9 @@ public class FileHelper {
     }
     public static Bitmap drawTextToBitmap(Context gContext,
                                           Bitmap bitmap,
-                                          String city,
                                           String country,
                                           double windSpeed) {
-        String gText = city + "\n" +
+        String gText =
                 country + "\n" +
                 windSpeed;
         Resources resources = gContext.getResources();

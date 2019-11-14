@@ -35,8 +35,11 @@ public class WeatherHistoryViewModel extends ViewModel {
                         , throwable -> historyLiveData.setValue(ResponseApi.error(throwable))));
     }
 
-    public void loadWeatherResponse(){
-        disposable.add(repository.getWeather()
+
+
+
+    public void loadWeatherResponse(String country){
+        disposable.add(repository.getWeather(country)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe(result -> weatherLiveData.postValue(ResponseApi.loading()))

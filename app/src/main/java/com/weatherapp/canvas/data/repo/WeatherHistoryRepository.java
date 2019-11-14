@@ -42,7 +42,7 @@ public class WeatherHistoryRepository {
         return Observable.just(listFile);
     }
 
-    public Single<WeatherResponseModel> getWeather(){
-        return apiServices.getWeatherResponse("Cairo", BuildConfig.API_KEY);
+    public Single<WeatherResponseModel> getWeather(String country){
+        return apiServices.getWeatherResponse(country, BuildConfig.API_KEY);
     }
 }

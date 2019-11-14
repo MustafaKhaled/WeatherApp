@@ -1,9 +1,6 @@
 package com.weatherapp.canvas.ui.main.adapter;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +9,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
-import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.weatherapp.canvas.R;
 import com.weatherapp.canvas.callback.OnHistoryItemListener;
 import com.weatherapp.canvas.data.local.model.WeatherHistoryItem;
-import com.weatherapp.canvas.databinding.DayWeatherListItemBinding;
-import com.weatherapp.canvas.util.FileHelper;
 import com.weatherapp.canvas.util.MyApplication;
 
 import java.io.File;
@@ -34,8 +26,6 @@ import butterknife.ButterKnife;
 public class WeatherHistoryAdapter extends RecyclerView.Adapter<WeatherHistoryAdapter.WeatherHistoryViewHolder> {
     private List<WeatherHistoryItem> mainHistoryList = new ArrayList<>();
     private OnHistoryItemListener listener;
-    private ImageLoader imageLoader = ImageLoader.getInstance();
-
     public WeatherHistoryAdapter(OnHistoryItemListener listener) {
         this.listener = listener;
     }

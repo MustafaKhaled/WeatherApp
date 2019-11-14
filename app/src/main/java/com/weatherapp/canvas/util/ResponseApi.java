@@ -22,7 +22,7 @@ public class ResponseApi<T> {
         return new ResponseApi<>(Status.LOADING, null, null);
     }
 
-    public static <T> ResponseApi success(@NonNull T data) {
+    public static <T> ResponseApi<T> success(@NonNull T data) {
         return new ResponseApi<>(Status.SUCCESS, data, null);
     }
 
